@@ -5,3 +5,5 @@ windowlayoutstate.pper
 workbench-pane.pper
 Assignment.Rproj
 .Rhistory
+.Rproj.*
+.RData
