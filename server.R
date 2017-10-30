@@ -17,6 +17,11 @@ $('#' + boxid).closest('.box').find('[data-widget=collapse]').click();
 sqlite <- dbConnect(SQLite(), "db.sqlite")
 
 server <- function(input, output, session) {
+  
+  ######################################################
+  # Forward Pricing
+  ######################################################
+  
   observeEvent(input$ab_Initial_Pricing, {
     js$collapse("box_Do")
     hide(id = "box_Initial_Pricing", anim = FALSE)
@@ -284,7 +289,13 @@ server <- function(input, output, session) {
         dyRangeSelector()
     })
   })
+  ######################################################
+  # Option Pricing
+  ######################################################
   
+  ######################################################
+  # Table Explorer
+  ######################################################
   observeEvent(
     input$load_table_Stock_Pricing_Dynamic,
     output$table_Stock_Pricing_Dynamic <- renderDataTable({
