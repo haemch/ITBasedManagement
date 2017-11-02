@@ -141,6 +141,11 @@ server <- function(input, output, session) {
           as.Date(input$ti_Contracting_Date),
           unit = "weeks"
         )) / 52.1775)
+      
+      ######################################################
+      # Forward Value Calculation
+      ######################################################
+      
       temp_db_draw$Liability <-
         -temp_db_draw$F_Price * exp(-temp_db_draw$Interest_Rate_Cont * temp_db_draw$TtM)
       temp_db_draw$Asset <- temp_db_draw$Stock_Price
