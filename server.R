@@ -18,9 +18,9 @@ sqlite <- dbConnect(SQLite(), "db.sqlite")
 
 server <- function(input, output, session) {
   
-  ######################################################
-  # Forward Pricing
-  ######################################################
+  ##################################################################
+  ## FW Pricing
+  ##################################################################
   
   observeEvent(input$ab_Initial_Pricing, {
     js$collapse("box_Do")
@@ -74,12 +74,12 @@ server <- function(input, output, session) {
                  append = TRUE)
     
     
-    #js$collapse("box_Do")
     js$collapse("box_Plan")
   })
   
   observeEvent(input$button_Plan, {
-    #js$collapse("box_Plan")
+    
+    output$to_Plan <- renderText("N(d1) = 1")
     js$collapse("box_Check")
   })
   
@@ -87,11 +87,12 @@ server <- function(input, output, session) {
   
   
   observeEvent(input$button_Check, {
-    #js$collapse("box_Check")
+    output$to_Check <- renderText("Delta N(d1) = 0")
     js$collapse("box_Act")
   })
   
   observeEvent(input$button_Act, {
+    output$to_Act <- renderText("Forward: No action possible")
     v$doCalcAndPlot <- input$button_Act #CalcAndPlot
   })
   
@@ -99,6 +100,11 @@ server <- function(input, output, session) {
     js$collapse("box_Act")
     js$collapse("box_Plan")
     js$collapse("box_Check")
+    
+    output$to_Plan <- renderText("")
+    output$to_Check <- renderText("")
+    output$to_Act <- renderText("")
+    
   })
   
   observeEvent(input$reset_db, {
@@ -142,9 +148,9 @@ server <- function(input, output, session) {
           unit = "weeks"
         )) / 52.1775)
       
-      ######################################################
-      # Forward Value Calculation
-      ######################################################
+      ##################################################################
+      ## Calculation
+      ##################################################################
       
       temp_db_draw$Liability <-
         -temp_db_draw$F_Price * exp(-temp_db_draw$Interest_Rate_Cont * temp_db_draw$TtM)
@@ -162,12 +168,12 @@ server <- function(input, output, session) {
         dbReadTable(sqlite, "Stock_Derivative_Static")
       temp_db_Derivative_Instrument_Dynamic <-
         cbind.data.frame(
-          tail(temp_Stock_Derivative_Static$Stock_Derivative_ID, 1),
+          tail(temp_Stock_Derivative_Static$Stock_Derivative_Static_ID, 1),
           as.character(input$ti_Do_timestamp),
           tail(temp_db_draw$'Forward Value', 1)
         )
       names(temp_db_Derivative_Instrument_Dynamic) <-
-        c("Stock_Derivative_ID",
+        c("Stock_Derivative_Static_ID",
           "timestamp",
           "Fair_Value")
       dbWriteTable(
@@ -183,7 +189,7 @@ server <- function(input, output, session) {
       temp_db_Economic_Resource_Risky_Income <-
         cbind.data.frame(
           tail(
-            temp_Derivative_Instrument_Dynamic$Derivative_Instrument_ID,
+            temp_Derivative_Instrument_Dynamic$Derivative_Instrument_Dynamic_ID,
             1
           ),
           as.character(input$ti_Do_timestamp),
@@ -193,7 +199,7 @@ server <- function(input, output, session) {
         )
       names(temp_db_Economic_Resource_Risky_Income) <-
         c(
-          "Derivative_Instrument_ID",
+          "Derivative_Instrument_Dynamic_ID",
           "timestamp",
           "Nd1t",
           "Value",
@@ -212,7 +218,7 @@ server <- function(input, output, session) {
       temp_db_Economic_Resource_Fixed_Income <-
         cbind.data.frame(
           tail(
-            temp_Derivative_Instrument_Dynamic$Derivative_Instrument_ID,
+            temp_Derivative_Instrument_Dynamic$Derivative_Instrument_Dynamic_ID,
             1
           ),
           as.character(input$ti_Do_timestamp),
@@ -221,7 +227,7 @@ server <- function(input, output, session) {
         )
       names(temp_db_Economic_Resource_Fixed_Income) <-
         c(
-          "Derivative_Instrument_ID",
+          "Derivative_Instrument_Dynamic_ID",
           "timestamp",
           "Present_Value",
           "Asset_Or_Liability"
@@ -241,14 +247,14 @@ server <- function(input, output, session) {
         temp_db_asset <-
           cbind.data.frame(
             tail(
-              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_ID,
+              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_Dynamic_ID,
               1
             ),
             as.character(input$ti_Do_timestamp),
             tail(temp_Derivative_Instrument_Dynamic$Fair_Value, 1)
           )
         names(temp_db_asset) <-
-          c("Derivative_Instrument_ID",
+          c("Derivative_Instrument_Dynamic_ID",
             "timestamp",
             "Fair_Value")
         dbWriteTable(sqlite, "Asset", temp_db_asset, append = TRUE)
@@ -259,14 +265,14 @@ server <- function(input, output, session) {
         temp_db_liability <-
           cbind.data.frame(
             tail(
-              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_ID,
+              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_Dynamic_ID,
               1
             ),
             as.character(input$ti_Do_timestamp),
             tail(temp_Derivative_Instrument_Dynamic$Fair_Value, 1)
           )
         names(temp_db_liability) <-
-          c("Derivative_Instrument_ID",
+          c("Derivative_Instrument_Dynamic_ID",
             "timestamp",
             "Fair_Value")
         dbWriteTable(sqlite, "Liability", temp_db_liability, append = TRUE)
@@ -278,13 +284,13 @@ server <- function(input, output, session) {
         temp_db_off_balance <-
           cbind.data.frame(
             tail(
-              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_ID,
+              temp_Derivative_Instrument_Dynamic$Derivative_Instrument_Dynamic_ID,
               1
             ),
             as.character(input$ti_Do_timestamp)
           )
         names(temp_db_off_balance) <-
-          c("Derivative_Instrument_ID",
+          c("Derivative_Instrument_Dynamic_ID",
             "timestamp")
         dbWriteTable(sqlite, "Off_Balance", temp_db_off_balance, append = TRUE)
       }
@@ -294,13 +300,16 @@ server <- function(input, output, session) {
         dyRangeSelector()
     })
   })
-  ######################################################
-  # Option Pricing
-  ######################################################
   
-  ######################################################
-  # Table Explorer
-  ######################################################
+  ##################################################################
+  ## Option Pricing
+  ##################################################################
+  
+  
+  ##################################################################
+  ## Table Explorer
+  ##################################################################
+  
   observeEvent(
     input$load_table_Stock_Pricing_Dynamic,
     output$table_Stock_Pricing_Dynamic <- renderDataTable({
