@@ -181,7 +181,130 @@ ui <- dashboardPage(
       ##################################################################
       
       tabItem(tabName = "optionpricing",
-              h2("Option Pricing")),
+              h2("Option Pricing"),
+              fluidRow(
+                box(
+                  id = "box_Initial_Pricing_OP",
+                  title = "Initial Pricing",
+                  width = 12,
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  
+                  column(
+                    3,
+                    textInput("ti_Type_Of_Stock_Derivative_OP", "Type Of Stock Derivative", "1"),
+                    textInput("ti_Stock_ISIN_OP", "Stock ISIN", "AT0001"),
+                    textInput("ti_Contract_Size_OP", "Contract Size", "1")
+                  ),
+                  
+                  column(
+                    3,
+                    textInput("ti_Number_Of_Contracts_OP", "Number Of Contracts", "1"),
+                    textInput("ti_Exercise_Or_Forward_Price_OP", "Exercise Or Forward Price", "100"),
+                    dateInput(
+                      "ti_Contracting_Date_OP",
+                      "Contracting Date",
+                      value = "2020-01-01",
+                      min = "2020-01-01"
+                    )
+                  ),
+                  
+                  column(
+                    3,
+                    dateInput(
+                      "ti_Expiration_Date_OP",
+                      "Expiration Date",
+                      value = "2020-12-31",
+                      min = "2020-01-01"
+                    ),
+                    textInput("ti_Interest_Rate_OP", "Interest Rate in %", "4"),
+                    textInput("ti_Stock_Volatility_OP", "Stock Volatility in %", "0")
+                  ),
+                  
+                  column(
+                    3,
+                    textInput("ti_Mark_To_Model_OP", "Mark To Model", "1"),
+                    actionButton("ab_Initial_Pricing_OP", "Finish Initial Pricing")
+                  )
+                ),
+                
+                box(
+                  id = "box_Do_OP",
+                  title = "First Step (Do)",
+                  width = 3,
+                  align = "center",
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  
+                  dateInput(
+                    "ti_Do_timestamp_OP",
+                    "Date",
+                    value = "2020-01-01",
+                    min = "2020-01-01"
+                  ),
+                  textInput(
+                    "ti_Do_Stock_Price_OP",
+                    "Stock Price",
+                    value = 100
+                  ),
+                  actionButton("button_Do_OP", "Do")
+                  
+                  
+                ),
+                
+                box(
+                  id = "box_Plan_OP",
+                  title = "Second Step (Plan)",
+                  width = 3,
+                  align = "center",
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  actionButton("button_Plan_OP", "Plan"),
+                  verbatimTextOutput("to_Plan_OP", placeholder = TRUE)
+                ),
+                
+                box(
+                  id = "box_Check_OP",
+                  title = "Third Step (Check)",
+                  width = 3,
+                  align = "center",
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  actionButton("button_Check_OP", "Check"),
+                  verbatimTextOutput("to_Check_OP", placeholder = TRUE)
+                ),
+                
+                box(
+                  id = "box_Act_OP",
+                  title = "Fourth Step (Act)",
+                  width = 3,
+                  align = "center",
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  collapsed = TRUE,
+                  actionButton("button_Act_OP", "Act"),
+                  verbatimTextOutput("to_Act_OP", placeholder = TRUE),
+                  actionButton("button_Act_Continue_OP", "Continue")
+                ),
+                
+                box(
+                  title = "Timeline",
+                  width = 12,
+                  status = "primary",
+                  solidHeader = TRUE,
+                  collapsible = TRUE,
+                  dygraphOutput("timeline_OP", height = 250)
+                )
+              )
+              ),
       
       ##################################################################
       ## Table Explorer

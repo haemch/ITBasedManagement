@@ -13,8 +13,8 @@ shinyjs.collapse = function(boxid) {
 $('#' + boxid).closest('.box').find('[data-widget=collapse]').click();
 }
 "
-
 sqlite <- dbConnect(SQLite(), "db.sqlite")
+
 
 server <- function(input, output, session) {
   
@@ -106,19 +106,6 @@ server <- function(input, output, session) {
     output$to_Act <- renderText("")
     
   })
-  
-  observeEvent(input$reset_db, {
-    dbSendStatement(sqlite, "DELETE from Stock_Derivative_Static")
-    dbSendStatement(sqlite, "DELETE from Stock_Pricing_Dynamic")
-    dbSendStatement(sqlite, "DELETE from Derivative_Instrument_Dynamic")
-    dbSendStatement(sqlite, "DELETE from Economic_Resource_Risky_Income")
-    dbSendStatement(sqlite, "DELETE from Economic_Resource_Fixed_Income")
-    dbSendStatement(sqlite, "DELETE from Asset")
-    dbSendStatement(sqlite, "DELETE from Liability")
-    dbSendStatement(sqlite, "DELETE from Off_Balance")
-  })
-  
-
   
   v <- reactiveValues(doCalcAndPlot = FALSE) #recalc and redraw
   
@@ -370,4 +357,22 @@ server <- function(input, output, session) {
                output$table_Off_Balance <- renderDataTable({
                  dbReadTable(sqlite, "Off_Balance")
                }))
+  
+ ##################################################################
+ ## Reset DB
+ ##################################################################
+  
+  observeEvent(input$reset_db, {
+    dbSendStatement(sqlite, "DELETE from Stock_Derivative_Static")
+    dbSendStatement(sqlite, "DELETE from Stock_Pricing_Dynamic")
+    dbSendStatement(sqlite, "DELETE from Derivative_Instrument_Dynamic")
+    dbSendStatement(sqlite, "DELETE from Economic_Resource_Risky_Income")
+    dbSendStatement(sqlite, "DELETE from Economic_Resource_Fixed_Income")
+    dbSendStatement(sqlite, "DELETE from Asset")
+    dbSendStatement(sqlite, "DELETE from Liability")
+    dbSendStatement(sqlite, "DELETE from Off_Balance")
+  })
+  
+  
+  
 }
