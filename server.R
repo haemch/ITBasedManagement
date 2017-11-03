@@ -289,6 +289,26 @@ server <- function(input, output, session) {
   })
   
   ##################################################################
+  ## Calculate d1 and d2
+  ## P...Stock price
+  ## X...Exercise price
+  ## r... interest rate
+  ## v... volatility
+  ## t... time to maturity
+  ## d1ord2... if 1 -> d1 , if 2 -> d2 is calculated
+  ##################################################################
+  
+  calculate_d <- function(P,X,r,v,t, d1ord2){
+    if(d1ord2 == 1){
+      return((log(P/X) + (r+v^2/2)*t)/(v*sqrt(t)))
+    } 
+    if(d1ord2==2){
+      return((log(P/X)+(r-v^2/2)*t)/(v*sqrt(t)))
+    }
+    return(NULL)
+  }
+  
+  ##################################################################
   ## Option Pricing
   ##################################################################
   observeEvent(input$ab_Initial_Pricing_OP, {
