@@ -291,7 +291,42 @@ server <- function(input, output, session) {
   ##################################################################
   ## Option Pricing
   ##################################################################
-  
+  observeEvent(input$ab_Initial_Pricing_OP, {
+    js$collapse("box_Do_OP")
+    hide(id = "box_Initial_Pricing_OP", anim = FALSE)
+    
+    temp_db_Stock_Derivative_Static_OP <-
+      cbind.data.frame(
+        input$ti_Type_Of_Stock_Derivative_OP,
+        input$ti_Stock_ISIN_OP,
+        input$ti_Exercise_Or_Forward_Price_OP,
+        as.character(input$ti_Contracting_Date_OP),
+        as.character(input$ti_Expiration_Date_OP),
+        input$ti_Contract_Size_OP,
+        input$ti_Number_Of_Contracts_OP,
+        input$ti_Stock_Volatility_OP,
+        input$ti_Interest_Rate_OP,
+        input$ti_Mark_To_Model_OP
+      )
+    names(temp_db_Stock_Derivative_Static_OP) <-
+      c(
+        "Type_Of_Stock_Derivative",
+        "Stock_ISIN",
+        "Exercise_Or_Forward_Price",
+        "Contracting_Date",
+        "Expiration_Date",
+        "Contract_Size",
+        "Number_Of_Contracts",
+        "Stock_Volatility",
+        "Interest_Rate",
+        "Mark_To_Model"
+      )
+    dbWriteTable(sqlite,
+                 "Stock_Derivative_Static",
+                 temp_db_Stock_Derivative_Static_OP,
+                 append = TRUE)
+    ## ToDo: Calculate transactional data and store it in db
+  })
   
   ##################################################################
   ## Table Explorer
