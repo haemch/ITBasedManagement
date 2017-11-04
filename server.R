@@ -378,9 +378,54 @@ server <- function(input, output, session) {
                  append=TRUE
                  )
     
+    ## Private foreign key Derivative_Instrument_Dynamic_ID
+    temp_db_Derivative_Instrument_Dynamic <-
+      dbReadTable(sqlite, "Derivative_Instrument_Dynamic")
+    pfk <- tail(temp_db_Derivative_Instrument_Dynamic,1)[,1]
+  
     ## Write asset to Economic_Resource_Risky_Income
+    temp_db_Economic_Resource_Risky_Income <-
+      cbind.data.frame(
+          pfk,
+          as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
+          pnorm(calculate_d(p,p,r,v,1,1)),
+          asset,
+          0
+      )
+    names(temp_db_Economic_Resource_Risky_Income) <-
+      c(
+        "Derivative_Instrument_Dynamic_ID",
+        "timestamp",
+        "Nd1t",
+        "Value",
+        "Asset_Or_Liability"
+      )
+    dbWriteTable(sqlite,
+                 "Economic_Resource_Risky_Income",
+                 temp_db_Economic_Resource_Risky_Income,
+                 append= TRUE
+                 )
     
     ## Write liability to Economic_Resource_Fixed_Income
+    temp_db_Economic_Resource_Fixed_Income <-
+      cbind.data.frame(
+        pfk,
+        as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
+        liability,
+        1
+      )
+    names(temp_db_Economic_Resource_Fixed_Income) <-
+      c(
+        "Derivative_Instrument_Dynamic_ID",
+        "timestamp",
+        "Present_Value",
+        "Asset_Or_Liability"
+      )
+    dbWriteTable(sqlite,
+                 "Economic_Resource_Fixed_Income",
+                 temp_db_Economic_Resource_Fixed_Income,
+                 append= TRUE
+    )
     
   })
   
