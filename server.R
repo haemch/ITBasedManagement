@@ -315,6 +315,7 @@ server <- function(input, output, session) {
     js$collapse("box_Do_OP")
     hide(id = "box_Initial_Pricing_OP", anim = FALSE)
     
+    ## Create table input for Stock_Derivative_Static
     temp_db_Stock_Derivative_Static_OP <-
       cbind.data.frame(
         input$ti_Type_Of_Stock_Derivative_OP,
@@ -345,7 +346,42 @@ server <- function(input, output, session) {
                  "Stock_Derivative_Static",
                  temp_db_Stock_Derivative_Static_OP,
                  append = TRUE)
-    ## ToDo: Calculate transactional data and store it in db
+    
+    ## Calculate asset and liability part of FV
+    p <- as.double(as.character(temp_db_Stock_Derivative_Static_OP$Exercise_Or_Forward_Price))
+    r <- as.double(as.character(temp_db_Stock_Derivative_Static_OP$Interest_Rate))/100
+    v <- as.double(as.character(temp_db_Stock_Derivative_Static_OP$Stock_Volatility))/100
+    asset <-  p * pnorm(calculate_d(p,p,r,v,1,1))
+    liability <- p * exp(-r) * pnorm(calculate_d(p,p,r,v,1,2))
+    
+    
+    ## Get key for Derivative_Instrument_Dynamic foreign key
+    temp_Stock_Derivative_Static <-
+      dbReadTable(sqlite, "Stock_Derivative_Static")
+    
+    ## Create table input for table Derivative_Instrument_Dynamic
+    temp_db_Derivative_Instrument_Dynamic <- 
+      cbind.data.frame(
+        tail(temp_Stock_Derivative_Static,1)[,1],
+        as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
+        asset - liability
+      )
+    names(temp_db_Derivative_Instrument_Dynamic) <- 
+      c(
+        "Stock_Derivative_Static_ID",
+        "timestamp",
+        "Fair_Value"
+      )
+    dbWriteTable(sqlite,
+                 "Derivative_Instrument_Dynamic",
+                 temp_db_Derivative_Instrument_Dynamic,
+                 append=TRUE
+                 )
+    
+    ## Write asset to Economic_Resource_Risky_Income
+    
+    ## Write liability to Economic_Resource_Fixed_Income
+    
   })
   
   ##################################################################

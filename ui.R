@@ -218,8 +218,8 @@ ui <- dashboardPage(
                       value = "2020-12-31",
                       min = "2020-01-01"
                     ),
-                    textInput("ti_Interest_Rate_OP", "Interest Rate in %", "4"),
-                    textInput("ti_Stock_Volatility_OP", "Stock Volatility in %", "0")
+                    textInput("ti_Interest_Rate_OP", "Interest Rate in %", "5"),
+                    textInput("ti_Stock_Volatility_OP", "Stock Volatility in %", "20")
                   ),
                   
                   column(
