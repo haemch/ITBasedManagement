@@ -429,6 +429,62 @@ server <- function(input, output, session) {
     
   })
   
+  ## Do Button
+  observeEvent(input$button_Do_OP, {
+    temp_db_Stock_Pricing_Dynamic_OP <-
+      cbind.data.frame(
+        input$ti_Stock_ISIN_OP,
+        input$ti_Do_Stock_Price_OP,
+        as.character(input$ti_Do_timestamp_OP)
+      )
+    names(temp_db_Stock_Pricing_Dynamic_OP) <-
+      c("Stock_ISIN",
+        "Stock_Price",
+        "timestamp")
+    dbWriteTable(sqlite,
+                 "Stock_Pricing_Dynamic",
+                 temp_db_Stock_Pricing_Dynamic_OP,
+                 append = TRUE)
+    
+    
+    js$collapse("box_Plan_OP")
+  })
+  
+  
+  ## PLan Button
+  observeEvent(input$button_Plan_OP, {
+    db_Stock_Pricing_Dynamic <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
+    stock_Price <- tail(db_Stock_Pricing_Dynamic,1)[,3]
+    stock_Date <- tail(db_Stock_Pricing_Dynamic,1)[,4]
+    db_Stock_Derivative_Static <- dbReadTable(sqlite, "Stock_Derivative_Static")
+    last_Entry <- tail(db_Stock_Derivative_Static,1)
+    
+    p <- as.double(as.character(last_Entry$Exercise_Or_Forward_Price))
+    r <- as.double(as.character(last_Entry$Interest_Rate))/100
+    v <- as.double(as.character(last_Entry$Stock_Volatility))/100
+    time_to_maturity <- 
+        as.numeric(difftime(
+    as.Date(last_Entry$Expiration_Date),
+    as.Date(stock_Date),
+    unit = "weeks"
+  )) / 52.1775
+    nd1 <- pnorm(calculate_d(stock_Price,p,r,v,time_to_maturity,1))
+    asset <-  p * nd1
+    liability <- p * exp(-r) * pnorm(calculate_d(stock_Price,p,r,v,time_to_maturity,2))
+    
+    output$to_Plan_OP <- renderText(paste("N(d1) =", round(nd1*100,2), "%"))
+    output$to_Plan_OP_Risky_Income <- renderText(paste("Asset =", round(asset,2)))
+    output$to_Plan_OP_Fixed_Income <- renderText(paste("Liability =", round(liability,2)))
+    js$collapse("box_Check")
+  })
+  
+  
+  observeEvent(input$button_Check, {
+    output$to_Check <- renderText("Delta N(d1) = 0")
+    js$collapse("box_Act")
+  })
+  
+  
   ##################################################################
   ## Table Explorer
   ##################################################################

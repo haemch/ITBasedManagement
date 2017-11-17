@@ -265,7 +265,9 @@ ui <- dashboardPage(
                   collapsible = TRUE,
                   collapsed = TRUE,
                   actionButton("button_Plan_OP", "Plan"),
-                  verbatimTextOutput("to_Plan_OP", placeholder = TRUE)
+                  verbatimTextOutput("to_Plan_OP", placeholder = TRUE),
+                  verbatimTextOutput("to_Plan_OP_Risky_Income", placeholder = TRUE),
+                  verbatimTextOutput("to_Plan_OP_Fixed_Income", placeholder = TRUE)
                 ),
                 
                 box(
