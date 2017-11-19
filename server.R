@@ -475,13 +475,13 @@ server <- function(input, output, session) {
     output$to_Plan_OP <- renderText(paste("N(d1) =", round(nd1*100,2), "%"))
     output$to_Plan_OP_Risky_Income <- renderText(paste("Asset =", round(asset,2)))
     output$to_Plan_OP_Fixed_Income <- renderText(paste("Liability =", round(liability,2)))
-    js$collapse("box_Check")
+    js$collapse("box_Check_OP")
   })
   
   
   observeEvent(input$button_Check, {
     output$to_Check <- renderText("Delta N(d1) = 0")
-    js$collapse("box_Act")
+    js$collapse("box_Act_OP")
   })
   
   
