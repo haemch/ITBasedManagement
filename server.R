@@ -336,9 +336,9 @@ server <- function(input, output, session) {
     v <- as.double(as.character(last_Entry$Stock_Volatility))/100
     ttm <- calculate_TTM(date)
     
-    nd1 <- pnorm(calculate_d(stock_Price,p,r,v,ttm,1))
+    nd1 <- pnorm(calculate_d(stock_price,p,r,v,ttm,1))
     asset <-  p * nd1
-    liability <- p * exp(-r) * pnorm(calculate_d(stock_Price,p,r,v,ttm,2))
+    liability <- p * exp(-r) * pnorm(calculate_d(stock_price,p,r,v,ttm,2))
     df <- cbind.data.frame(nd1,asset,liability)
     names(df) <- c("nd1t", "asset","liability")
     
