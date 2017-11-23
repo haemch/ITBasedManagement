@@ -453,6 +453,108 @@ server <- function(input, output, session) {
                  append= TRUE
     )
   }
+  
+  ##################################################################
+  ## Write to Asset liability or Off-Balance
+  ## date..Date of observation
+  ## fair_value.. Fair value
+  ## if fair_value is > 0 it write to table asset if < 0 to liability and 
+  ## if = 0 to Off_Balance
+  ##################################################################
+  
+  write_to_Asset_Liability_or_OffBalance <- function(date, fair_value){
+    if(fair_value == 0){
+      temp_db_OffBalance <- dbReadTable(sqlite, "Off_Balance")
+      
+      
+      temp_db_OffBalance <-
+        cbind.data.frame(
+          date
+        )
+      names(temp_db_OffBalance) <-
+        c(
+          "timestamp"
+        )
+      dbWriteTable(sqlite,
+                   "Off_Balance",
+                   temp_db_OffBalance,
+                   append= TRUE
+      )
+    }
+    else if(fair_value > 0){
+      temp_db_Asset <- dbReadTable(sqlite, "Asset")
+      
+        temp_db_Asset <-
+        cbind.data.frame(
+          date,
+          fair_value
+        )
+      names(temp_db_Asset) <-
+        c(
+          "timestamp",
+          "Fair_Value"
+        )
+      dbWriteTable(sqlite,
+                   "Asset",
+                   temp_db_Asset,
+                   append= TRUE
+      )
+      
+    }
+    else{
+      temp_db_Liability <- dbReadTable(sqlite, "Liability")
+      
+      
+      temp_db_Liability <-
+        cbind.data.frame(
+          date,
+          fair_value
+        )
+      names(temp_db_Liability) <-
+        c(
+          "timestamp",
+          "Fair_Value"
+        )
+      dbWriteTable(sqlite,
+                   "Liability",
+                   temp_db_Liability,
+                   append= TRUE
+      )
+      
+    }
+    
+  }
+  
+  
+  ##################################################################
+  ## Write to Stock_Pricing_Dynamic 
+  ## stock_ISIN .. Stock_ISIN
+  ## stock_price .. Stock_Price
+  ## date .. Timestamp
+  ##################################################################
+  
+  write_to_Stock_Pricing_Dynamic <- function(stock_ISIN, stock_price, date){
+  
+    temp_db_Stock_Pricing_Dynamic <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
+    
+    temp_db_Stock_Pricing_Dynamic <-
+      cbind.data.frame(
+        stock_ISIN,
+        stock_price,
+        date
+      )
+    names(temp_db_Stock_Pricing_Dynamic) <-
+      c("Stock_ISIN",
+        "Stock_Price",
+        "timestamp")
+    
+    dbWriteTable(sqlite,
+                 "Stock_Pricing_Dynamic",
+                 temp_db_Stock_Pricing_Dynamic,
+                 append = TRUE)
+    
+  }
+  
   ##################################################################
   ## Option Pricing
   ##################################################################
@@ -504,31 +606,39 @@ server <- function(input, output, session) {
     write_to_Derivative_Instrument_Dynamic(as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
                                            asset,
                                            liability)
+    
     write_to_Economic_Resource_Risky_Income(as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
                                             nd1,
                                             asset)
     write_to_Economic_Resource_Fixed_Income(as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
                                             liability)
     
+    write_to_Asset_Liability_or_OffBalance(as.character(temp_db_Stock_Derivative_Static_OP$Contracting_Date),
+                                           (asset-liability))
+    
+    write_to_Stock_Pricing_Dynamic(input$ti_Stock_ISIN_OP,input$ti_Exercise_Or_Forward_Price_OP,
+                                   as.character(input$ti_Contracting_Date_OP))
+    
   })
   
   ## Do Button
   observeEvent(input$button_Do_OP, {
-    temp_db_Stock_Pricing_Dynamic_OP <-
-      cbind.data.frame(
-        input$ti_Stock_ISIN_OP,
-        input$ti_Do_Stock_Price_OP,
-        as.character(input$ti_Do_timestamp_OP)
-      )
-    names(temp_db_Stock_Pricing_Dynamic_OP) <-
-      c("Stock_ISIN",
-        "Stock_Price",
-        "timestamp")
-    dbWriteTable(sqlite,
-                 "Stock_Pricing_Dynamic",
-                 temp_db_Stock_Pricing_Dynamic_OP,
-                 append = TRUE)
-    
+   # temp_db_Stock_Pricing_Dynamic_OP <-
+    #  cbind.data.frame(
+     #   input$ti_Stock_ISIN_OP,
+      #  input$ti_Do_Stock_Price_OP,
+        #as.character(input$ti_Do_timestamp_OP)
+    #  )
+    #names(temp_db_Stock_Pricing_Dynamic_OP) <-
+     # c("Stock_ISIN",
+      #  "Stock_Price",
+       # "timestamp")
+    #dbWriteTable(sqlite,
+     #            "Stock_Pricing_Dynamic",
+      #           temp_db_Stock_Pricing_Dynamic_OP,
+       #          append = TRUE)
+    write_to_Stock_Pricing_Dynamic(input$ti_Stock_ISIN_OP,input$ti_Do_Stock_Price_OP,
+                                   as.character(input$ti_Do_timestamp_OP))
     
     js$collapse("box_Plan_OP")
   })
@@ -561,6 +671,44 @@ server <- function(input, output, session) {
     js$collapse("box_Act_OP")
   })
   
+  ## Act Button
+  observeEvent(input$button_Act_OP, {
+    db_Stock_Pricing_Dynamic <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
+    stock_Price <- tail(db_Stock_Pricing_Dynamic,1)[,3]
+    stock_Date <- tail(db_Stock_Pricing_Dynamic,1)[,4]
+    
+    df <- calculate_Asset_Liability_Nd1t(stock_Price, stock_Date)
+    
+    write_to_Derivative_Instrument_Dynamic(as.character(stock_Date),
+                                           df$asset,
+                                           df$liability)
+    write_to_Economic_Resource_Risky_Income(as.character(stock_Date),
+                                            df$nd1,
+                                            df$asset)
+    write_to_Economic_Resource_Fixed_Income(as.character(stock_Date),
+                                            df$liability)
+    
+    write_to_Asset_Liability_or_OffBalance(as.character(stock_Date),
+                                           (df$asset-df$liability))
+    
+    output$to_Act_OP <- renderText(paste("Fair-value = ",round((df$asset - df$liability),2)))
+    
+    
+  })
+  
+  ## Continue Button
+  observeEvent(input$button_Act_Continue_OP, {
+    js$collapse("box_Act_OP")
+    js$collapse("box_Plan_OP")
+    js$collapse("box_Check_OP")
+    
+    output$to_Plan_OP <- renderText("")
+    output$to_Plan_OP_Risky_Income <- renderText("")
+    output$to_Plan_OP_Fixed_Income <- renderText("")
+    output$to_Check_OP <- renderText("")
+    output$to_Act_OP <- renderText("")
+    
+  })
   
   ##################################################################
   ## Table Explorer
