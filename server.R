@@ -693,6 +693,8 @@ server <- function(input, output, session) {
     
     output$to_Act_OP <- renderText(paste("Fair-value = ",round((df$asset - df$liability),2)))
     
+    #Trigger timeline
+    v_OP$doCalcAndPlot <- input$button_Act_OP #CalcAndPlot
     
   })
   
@@ -708,6 +710,40 @@ server <- function(input, output, session) {
     output$to_Check_OP <- renderText("")
     output$to_Act_OP <- renderText("")
     
+  })
+  
+  ## Draw Timeline
+  v_OP <- reactiveValues(doCalcAndPlot = FALSE) #recalc and redraw
+  
+  output$timeline_OP <- renderDygraph({
+    if (v_OP$doCalcAndPlot == FALSE)
+      return()
+    isolate({
+    
+      #To get date
+      temp_db_draw_OP <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
+      temp_db_draw_OP$Pricing_Date <-
+        as.Date(as.POSIXct(temp_db_draw_OP$timestamp))
+      #TODO stuerzt ab bei zB do-date 2021-01-01
+      
+      #recalc as in plan - TODO
+      stock_Price <- tail(temp_db_draw_OP,1)[,3]
+      stock_Date <- tail(temp_db_draw_OP,1)[,4]
+      df <- calculate_Asset_Liability_Nd1t(stock_Price, stock_Date)
+      
+      temp_db_draw_OP$Asset <- round(df$asset,2)
+      temp_db_draw_OP$Liability <- round(df$liability,2)
+      temp_db_draw_OP$'Fair Value' <- round((df$asset - df$liability),2)
+
+      #Composing XTS
+      temp_xts_draw_OP <-
+        xts(x = temp_db_draw_OP[, c("Asset", "Liability", "Fair Value")], order.by =
+              temp_db_draw_OP[, 5])
+      
+      #Plotting XTS
+      dygraph(temp_xts_draw_OP) %>%
+        dyRangeSelector()
+    })
   })
   
   ##################################################################
