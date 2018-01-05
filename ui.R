@@ -429,11 +429,47 @@ ui <- dashboardPage(
         h2("User Guide and Documentation"),
         fluidRow(
           
-          p("Initial Pricing: Enter initial pricing data"),
-          p("Do: Enter date and stock price"),
-          p("Plan: "),
-          p("Check: Proposal for rebalancing portfolio"),
-          p("Act: Perform the proposed rebalancing of portfolio"),
+          
+          box(
+            title = "Do",
+            width = 3,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            collapsed = FALSE,
+            strong("Enter date and stock price")
+          ),
+          box(
+            title = "Plan",
+            width = 3,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            collapsed = FALSE,
+            strong("Calculate d1, N(d1,t), risky income & present value of fixed income")
+          ),
+          box(
+            title = "Check",
+            width = 3,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            collapsed = FALSE,
+            strong("Proposal for rebalancing portfolio")
+          ),
+          box(
+            title = "Act",
+            width = 3,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            collapsed = FALSE,
+            strong("Perform the proposed rebalancing of portfolio")
+          ),
           
           box(
             title = "Forward Pricing",
