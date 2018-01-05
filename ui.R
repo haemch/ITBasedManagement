@@ -478,33 +478,46 @@ ui <- dashboardPage(
           ),
           
           box(
-            title = "Forward Pricing",
-            width = 12,
-            align = "left",
-            status = "primary",
-            solidHeader = TRUE,
-            collapsible = TRUE,
-            collapsed = TRUE
-          ),
-          box(
-            title = "Option Pricing",
+            title = "Forward & Option Pricing",
             width = 12,
             align = "left",
             status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = TRUE,
-            img(src="forward-formular.png", align="center", width=700, height=400),
-            p("Time to maturity (in y) T"),
-            p("Price of underlying P"),
-            p("Exercise price X"),
-            p("Interest rate (cont.) r"),
-            p("Volatility (p.a.): sigma"),
-            p("Aux. Variable: d1"),
-            p("Asset weight N(d1)"),
-            p("Aux. Variable: d2"),
-            p("Loan weight N(d2)")
+            
+            div(h5(strong("Forward Pricing:")),
+                  p("A forward price is the predetermined delivery price for an underlying
+                    commodity, currency or financial asset decided upon by the long (the buyer)
+                    and the short (the seller) to be paid at predetermined date in the future.",
+                    a(href="https://www.investopedia.com/terms/f/forwardprice.asp","[1]")
+                  )
+               
+            ),
+            
+            div(h5(strong("Option Pricing:")),
+                  p("Options are derivative contracts that give the holder (the buyer)
+                    the right, but not the obligation, to buy or sell the underlying instrument
+                    at an agreed-upon price on or before a specified future date.
+                    Although the holder of the option is not obligated to exercise the option,
+                    the option writer (the seller) has an obligation to buy or sell the
+                    underlying instrument if the option is exercised.
+                    Option pricing refers to the amount per share at which an option is traded.",
+                    a(href="https://www.investopedia.com/university/options-pricing/", "[2]")
+                  )
+            ),
+            
+            div(h5(strong("Initial Pricing:")),
+                  p("To execute the PDCA cycle in the Forward & Option Pricing functionalities
+                    the user has to to fill in the Initial Pricing data. Afterwards all tables in the
+                    database (see below 'Table Explorer') are filled with the data. Especially the
+                    'Masterdata' table 'Stock_Derivate_Static' is initialized."
+                    ),
+                  p("After the inital data is set the next steps in the PDCA cycle are executed ('see below')")
+                )
           ),
+        
+        
           box(
             title = "Table Explorer",
             width = 12,
@@ -528,6 +541,8 @@ ui <- dashboardPage(
             
             
           )
+          #a(href="https://www.investopedia.com/terms/f/forwardprice.asp", "[1]"),
+          #a(href="https://www.investopedia.com/university/options-pricing/", "[2]")
         )
       )
     )
