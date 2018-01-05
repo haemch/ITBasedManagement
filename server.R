@@ -463,16 +463,22 @@ server <- function(input, output, session) {
   ##################################################################
   
   write_to_Asset_Liability_or_OffBalance <- function(date, fair_value){
+    ## Private foreign key Derivative_Instrument_Dynamic_ID
+    temp_db_Derivative_Instrument_Dynamic <- dbReadTable(sqlite, "Derivative_Instrument_Dynamic")
+    pfk <- tail(temp_db_Derivative_Instrument_Dynamic,1)[,1]
+    
     if(fair_value == 0){
       temp_db_OffBalance <- dbReadTable(sqlite, "Off_Balance")
       
       
       temp_db_OffBalance <-
         cbind.data.frame(
+          pfk,
           date
         )
       names(temp_db_OffBalance) <-
         c(
+          "Derivative_Instrument_Dynamic_ID",
           "timestamp"
         )
       dbWriteTable(sqlite,
@@ -486,11 +492,13 @@ server <- function(input, output, session) {
       
         temp_db_Asset <-
         cbind.data.frame(
+          pfk,
           date,
           fair_value
         )
       names(temp_db_Asset) <-
         c(
+          "Derivative_Instrument_Dynamic_ID",
           "timestamp",
           "Fair_Value"
         )
@@ -507,11 +515,13 @@ server <- function(input, output, session) {
       
       temp_db_Liability <-
         cbind.data.frame(
+          pfk,
           date,
           fair_value
         )
       names(temp_db_Liability) <-
         c(
+          "Derivative_Instrument_Dynamic_ID",
           "timestamp",
           "Fair_Value"
         )
@@ -536,6 +546,7 @@ server <- function(input, output, session) {
   write_to_Stock_Pricing_Dynamic <- function(stock_ISIN, stock_price, date){
   
     temp_db_Stock_Pricing_Dynamic <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
+   
     
     temp_db_Stock_Pricing_Dynamic <-
       cbind.data.frame(
@@ -544,7 +555,8 @@ server <- function(input, output, session) {
         date
       )
     names(temp_db_Stock_Pricing_Dynamic) <-
-      c("Stock_ISIN",
+      c(
+        "Stock_ISIN",
         "Stock_Price",
         "timestamp")
     
