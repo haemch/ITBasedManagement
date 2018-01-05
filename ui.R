@@ -430,6 +430,7 @@ ui <- dashboardPage(
         fluidRow(
 
           br(),
+          p("This application provides the implemenation of a European forward and call-option in the Shiny-ERP application, which explicitly implements the Plan-Do-Check-Act (PDCA) management cycle."),
           br(),
           div(img(src="pdca.png", align="center", width=700, height=400), align="center"),
           br(),
