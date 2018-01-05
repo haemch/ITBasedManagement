@@ -428,8 +428,13 @@ ui <- dashboardPage(
         tabName = "userinfo",
         h2("User Guide and Documentation"),
         fluidRow(
-          
-          
+
+          br(),
+          br(),
+          div(img(src="pdca.png", align="center", width=700, height=400), align="center"),
+          br(),
+          br(),
+
           box(
             title = "Do",
             width = 3,
