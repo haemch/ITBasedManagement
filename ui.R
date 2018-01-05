@@ -455,7 +455,8 @@ ui <- dashboardPage(
             align = "left",
             status = "primary",
             solidHeader = TRUE,
-            collapsible = TRUE
+            collapsible = TRUE,
+            img(src="db.png", align="center", width=700, height=400)
           )
         )
       )
