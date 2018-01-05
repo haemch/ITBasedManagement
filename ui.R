@@ -428,9 +428,9 @@ ui <- dashboardPage(
         tabName = "userinfo",
         h2("User Guide and Documentation"),
         fluidRow(
-
+          align ="center",
           br(),
-          p("This application provides the implemenation of a European forward and call-option in the Shiny-ERP application, which explicitly implements the Plan-Do-Check-Act (PDCA) management cycle."),
+          div(style="width:80%",  p("This application provides the implemenation of a European forward and call-option in the Shiny-ERP application, which explicitly implements the Plan-Do-Check-Act (PDCA) management cycle. The application is setup in a 3-layer architecture as shown in the figure below. The user interacts with the graphical interface, while the server part is dedicated to perform all calculations. All input and outcome is stored in the datebase.")),
           br(),
           div(img(src="pdca.png", align="center", width=700, height=400), align="center"),
           br(),
