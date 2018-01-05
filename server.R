@@ -719,28 +719,19 @@ server <- function(input, output, session) {
     if (v_OP$doCalcAndPlot == FALSE)
       return()
     isolate({
-    
-      #To get date
-      temp_db_draw_OP <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
-      temp_db_draw_OP$Pricing_Date <-
-        as.Date(as.POSIXct(temp_db_draw_OP$timestamp))
-      #TODO stuerzt ab bei zB do-date 2021-01-01: nach experation date
+      asset <- dbReadTable(sqlite, "Economic_Resource_Risky_Income")$Value
+      liability <- dbReadTable(sqlite, "Economic_Resource_Fixed_Income")$Present_Value
       
-      #TODO recalc as in plan step: aus risky income und fixed income auslesen
-      stock_Price <- tail(temp_db_draw_OP,1)[,3]
-      stock_Date <- tail(temp_db_draw_OP,1)[,4]
-      df <- calculate_Asset_Liability_Nd1t(stock_Price, stock_Date)
+      Pricing_Date <- as.Date(as.POSIXct(dbReadTable(sqlite, "Economic_Resource_Risky_Income")$timestamp))
       
-      temp_db_draw_OP$Asset <- round(df$asset,2)
-      temp_db_draw_OP$Liability <- round(df$liability,2)
-      temp_db_draw_OP$'Fair Value' <- round((df$asset - df$liability),2)
+      outp <- cbind.data.frame(asset,liability,Pricing_Date)
+      
+      outp$Asset <- round(asset,2)
+      outp$Liability <- round(liability,2)
+      outp$'Fair Value' <- round((asset - liability),2)
 
       #Composing XTS
-      temp_xts_draw_OP <-
-        xts(x = temp_db_draw_OP[, c("Asset", "Liability", "Fair Value")], order.by =
-              temp_db_draw_OP[, 5])
-      
-      ## TODO mehr als ein datenpunkt?: alle datenpunkte und nicht nur einen auslesen
+      temp_xts_draw_OP <- xts(x = outp[, c("Asset", "Liability", "Fair Value")], order.by = outp[, c("Pricing_Date")])
       
       #Plotting XTS
       dygraph(temp_xts_draw_OP) %>%
