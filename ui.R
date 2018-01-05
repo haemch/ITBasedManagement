@@ -428,9 +428,9 @@ ui <- dashboardPage(
         tabName = "userinfo",
         h2("User Guide and Documentation"),
         fluidRow(
-
+          align ="center",
           br(),
-          p("This application provides the implemenation of a European forward and call-option in the Shiny-ERP application, which explicitly implements the Plan-Do-Check-Act (PDCA) management cycle."),
+          div(style="width:80%",  p("This application provides the implemenation of a European forward and call-option in the Shiny-ERP application, which explicitly implements the Plan-Do-Check-Act (PDCA) management cycle. The application is setup in a 3-layer architecture as shown in the figure below. The user interacts with the graphical interface, while the server part is dedicated to perform all calculations. All input and outcome is stored in the datebase.")),
           br(),
           div(img(src="pdca.png", align="center", width=700, height=400), align="center"),
           br(),
@@ -444,7 +444,7 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = FALSE,
-            strong("Enter date and stock price")
+            em("In this section of the application the user adds the observed values of the position, the date and the stock price. The data is then stored as transactional data in the table 'Stock_Pricing_Dynamic'.")
           ),
           box(
             title = "Plan",
@@ -454,7 +454,7 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = FALSE,
-            strong("Calculate d1, N(d1,t), risky income & present value of fixed income")
+            em("The plan section displays results of the calculation. In case of the forward pricing the N(d1) value is shown. The plan part of the option pricing further displays the value of the risky income resource position(asset) and the fixed income resource position (liability).")
           ),
           box(
             title = "Check",
@@ -464,7 +464,7 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = FALSE,
-            strong("Proposal for rebalancing portfolio")
+            em("The check section compares the N(d1,t) and the N(d1,t-1) values and displays the difference.")
           ),
           box(
             title = "Act",
@@ -474,7 +474,18 @@ ui <- dashboardPage(
             solidHeader = TRUE,
             collapsible = TRUE,
             collapsed = FALSE,
-            strong("Perform the proposed rebalancing of portfolio")
+            em("The act step concludes the PDCA cycle. The transactional data is stored in the data tables:"),
+            br(),
+            br(),
+            tags$li(em("The fair value and the date is stored in the 'Derivative_Instrument_Dynamic' table.")),
+            tags$li(em("The asset is stored in 'Economic_Resource_Risky_Income'.")),
+            tags$li(em("The aiability is stored in 'Economic_Resource_Fixed_Income'.")),
+            tags$li(em("The value of the position is calculated and stored in the respective table (Asset/Liability/Off_Balance).")),
+            br(),
+            br(),
+            em("The timeline is refreshed and the cycle starts again with the 'Do' step.")
+            
+               
           ),
           
           box(
