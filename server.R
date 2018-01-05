@@ -635,20 +635,7 @@ server <- function(input, output, session) {
   
   ## Do Button
   observeEvent(input$button_Do_OP, {
-   # temp_db_Stock_Pricing_Dynamic_OP <-
-    #  cbind.data.frame(
-     #   input$ti_Stock_ISIN_OP,
-      #  input$ti_Do_Stock_Price_OP,
-        #as.character(input$ti_Do_timestamp_OP)
-    #  )
-    #names(temp_db_Stock_Pricing_Dynamic_OP) <-
-     # c("Stock_ISIN",
-      #  "Stock_Price",
-       # "timestamp")
-    #dbWriteTable(sqlite,
-     #            "Stock_Pricing_Dynamic",
-      #           temp_db_Stock_Pricing_Dynamic_OP,
-       #          append = TRUE)
+  
     write_to_Stock_Pricing_Dynamic(input$ti_Stock_ISIN_OP,input$ti_Do_Stock_Price_OP,
                                    as.character(input$ti_Do_timestamp_OP))
     
