@@ -429,7 +429,11 @@ ui <- dashboardPage(
         h2("User Guide and Documentation"),
         fluidRow(
           
-          p("general information"),
+          p("Initial Pricing: Enter initial pricing data"),
+          p("Do: Enter date and stock price"),
+          p("Plan: "),
+          p("Check: Proposal for rebalancing portfolio"),
+          p("Act: Perform the proposed rebalancing of portfolio"),
           
           box(
             title = "Forward Pricing",
@@ -446,8 +450,16 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
-            
-            p("test")
+            img(src="forward-formular.png", align="center", width=700, height=400),
+            p("Time to maturity (in y) T"),
+            p("Price of underlying P"),
+            p("Exercise price X"),
+            p("Interest rate (cont.) r"),
+            p("Volatility (p.a.): sigma"),
+            p("Aux. Variable: d1"),
+            p("Asset weight N(d1)"),
+            p("Aux. Variable: d2"),
+            p("Loan weight N(d2)")
           ),
           box(
             title = "Table Explorer",
