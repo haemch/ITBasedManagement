@@ -456,7 +456,20 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
-            img(src="db.png", align="center", width=700, height=400)
+            strong("With the table explorer the user is enabled to explore the tables of the underlying database.
+               The names of the boxes relate to the database table."),
+            br(),
+            br(),
+            em("The following image displays the structure of the database:"),
+            hr(),
+            div(img(src="db.png", align="center", width=700, height=400), align="center"),
+            hr(),
+            img(src="reset_db_button.png", width=90, height=25),
+            br(),
+            br(),
+            strong("The 'Reset Database' button deletes all the entries in the database except the tables which are considered as Masterdata.")
+            
+            
           )
         )
       )
