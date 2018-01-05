@@ -426,7 +426,38 @@ ui <- dashboardPage(
       
       tabItem(
         tabName = "userinfo",
-        h2("User Guide and Documentation")
+        h2("User Guide and Documentation"),
+        fluidRow(
+          
+          p("general information"),
+          
+          box(
+            title = "Forward Pricing",
+            width = 12,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE
+          ),
+          box(
+            title = "Option Pricing",
+            width = 12,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE,
+            
+            p("test")
+          ),
+          box(
+            title = "Table Explorer",
+            width = 12,
+            align = "left",
+            status = "primary",
+            solidHeader = TRUE,
+            collapsible = TRUE
+          )
+        )
       )
     )
   )
