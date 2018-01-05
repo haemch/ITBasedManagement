@@ -725,6 +725,7 @@ server <- function(input, output, session) {
   })
   
   ## Draw Timeline
+  
   v_OP <- reactiveValues(doCalcAndPlot = FALSE) #recalc and redraw
   
   output$timeline_OP <- renderDygraph({
@@ -738,7 +739,7 @@ server <- function(input, output, session) {
         as.Date(as.POSIXct(temp_db_draw_OP$timestamp))
       #TODO stuerzt ab bei zB do-date 2021-01-01
       
-      #recalc as in plan - TODO
+      #TODO recalc as in plan step
       stock_Price <- tail(temp_db_draw_OP,1)[,3]
       stock_Date <- tail(temp_db_draw_OP,1)[,4]
       df <- calculate_Asset_Liability_Nd1t(stock_Price, stock_Date)
@@ -751,6 +752,8 @@ server <- function(input, output, session) {
       temp_xts_draw_OP <-
         xts(x = temp_db_draw_OP[, c("Asset", "Liability", "Fair Value")], order.by =
               temp_db_draw_OP[, 5])
+      
+      ## TODO mehr als ein datenpunkt?
       
       #Plotting XTS
       dygraph(temp_xts_draw_OP) %>%
