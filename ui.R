@@ -441,7 +441,8 @@ ui <- dashboardPage(
             align = "left",
             status = "primary",
             solidHeader = TRUE,
-            collapsible = TRUE
+            collapsible = TRUE,
+            collapsed = TRUE
           ),
           box(
             title = "Option Pricing",
@@ -450,6 +451,7 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
+            collapsed = TRUE,
             img(src="forward-formular.png", align="center", width=700, height=400),
             p("Time to maturity (in y) T"),
             p("Price of underlying P"),
@@ -468,6 +470,7 @@ ui <- dashboardPage(
             status = "primary",
             solidHeader = TRUE,
             collapsible = TRUE,
+            collapsed = TRUE,
             strong("With the table explorer the user is enabled to explore the tables of the underlying database.
                The names of the boxes relate to the database table."),
             br(),
