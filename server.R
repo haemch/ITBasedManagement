@@ -724,9 +724,9 @@ server <- function(input, output, session) {
       temp_db_draw_OP <- dbReadTable(sqlite, "Stock_Pricing_Dynamic")
       temp_db_draw_OP$Pricing_Date <-
         as.Date(as.POSIXct(temp_db_draw_OP$timestamp))
-      #TODO stuerzt ab bei zB do-date 2021-01-01
+      #TODO stuerzt ab bei zB do-date 2021-01-01: nach experation date
       
-      #TODO recalc as in plan step
+      #TODO recalc as in plan step: aus risky income und fixed income auslesen
       stock_Price <- tail(temp_db_draw_OP,1)[,3]
       stock_Date <- tail(temp_db_draw_OP,1)[,4]
       df <- calculate_Asset_Liability_Nd1t(stock_Price, stock_Date)
@@ -740,7 +740,7 @@ server <- function(input, output, session) {
         xts(x = temp_db_draw_OP[, c("Asset", "Liability", "Fair Value")], order.by =
               temp_db_draw_OP[, 5])
       
-      ## TODO mehr als ein datenpunkt?
+      ## TODO mehr als ein datenpunkt?: alle datenpunkte und nicht nur einen auslesen
       
       #Plotting XTS
       dygraph(temp_xts_draw_OP) %>%
@@ -827,7 +827,6 @@ server <- function(input, output, session) {
     dbSendStatement(sqlite, "DELETE from Liability")
     dbSendStatement(sqlite, "DELETE from Off_Balance")
   })
-  
   
   
 }
